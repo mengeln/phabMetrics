@@ -7,4 +7,7 @@ Author: Mark W. Engeln
 Maintainer: Mark W. Engeln <mengeln@gmail.com>
 Description: Compute SWAMP metrics from physical habitat data
 License: MIT
-Depends: plyr, reshape2, vegan
+Depends:
+    plyr,
+    reshape2,
+    vegan

@@ -1,3 +1,12 @@
+#' Calculate SWAMP PHAB metrics
+#'
+#' @param phabdata A data frame of SWAMP formatted PHAB data
+#' @param verbose 0 (default) is silent, 1 prints SampleIDs, 2 prints metrics
+#' @return A data frame with the metric values, standard deviations, and
+#' sample size for all successfully calculated metrics
+#' @export
+
+
 metricsPHAB <- function(phabdata, verbose = 0){
   metricFun <- function (data) {
     

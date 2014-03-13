@@ -1,3 +1,12 @@
+#' Check validty of PHAB data
+#'
+#' @param phabdata A data frame of SWAMP formatted PHAB data
+#' @param returnPurged If false (default), return data frame
+#' listing problematic rows. If true, return data frame where 
+#' SampleID/AnalyteName combinations that contain problematic
+#' rows have been removed.
+#' @export
+
 validatePHAB <- function(data, returnPurged = FALSE) {
   requiredCols <- c("StationCode", "SampleID", "LocationCode",
                     "AnalyteName", "VariableResult", "Result",
