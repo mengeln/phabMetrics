@@ -1,0 +1,10 @@
+Package: phabMetrics
+Type: Package
+Title: PHAB Metrics
+Version: 0.1
+Date: 2014-03-12
+Author: Mark W. Engeln
+Maintainer: Mark W. Engeln <mengeln@gmail.com>
+Description: Compute SWAMP metrics from physical habitat data
+License: MIT
+Depends: plyr, reshape2, vegan
