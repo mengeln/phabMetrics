@@ -43,12 +43,27 @@ channelMorphology <- function(datum){
   result$count <- rep(tapply(data$Location2, data$SampleID, length)/7, each=length(metrics))
 
   depth <- subset(datum, AnalyteName == "StationWaterDepth")
-  depth$Result <- as.numeric(depth$Result)
-  depth$Location2 <- sapply(strsplit(as.character(depth$LocationCode), ","), function(x)x[1])
-  depth_result <- metricCalc(NULL)(depth, c(XWDEPTH = function(x)sum(x$Result),
-                                            XWDM = function(x)max(x$Result)))
+  if(nrow(depth) == 0)
+    depth_result <- data.frame("SampleID"=NULL,
+                               "metric"=NULL, 
+                               "mean"=NULL,
+                               "sd"=NULL,
+                               "count"=NULL)
+  else {
+    depth$Result <- as.numeric(depth$Result)
+    depth$Location2 <- sapply(strsplit(as.character(depth$LocationCode), ","), function(x)x[1])
+    depth_result <- metricCalc(NULL)(depth, c(XWDEPTH = function(x)sum(x$Result),
+                                              XWDM = function(x)max(x$Result)))
+  }
   
   width <- subset(datum, AnalyteName == "Wetted Width" & LocationCode != "X")
+  if(nrow(width) == 0)
+    width_result <- data.frame("SampleID"=NULL,
+                               "metric"=NULL, 
+                               "mean"=NULL,
+                               "sd"=NULL,
+                               "count"=NULL)
+  else {
   width$Result <- as.numeric(width$Result)
   width$Location2 <- sapply(strsplit(as.character(width$LocationCode), ","), function(x)x[1])
   width_result <- metricCalc(NULL)(width, c(XWIDTH = function(x)sum(x$Result)))
@@ -59,24 +74,34 @@ channelMorphology <- function(datum){
 
   XWDR <- data.frame(cbind(widthdepth$SampleID, rep("XWDR", nrow(widthdepth)),
                            widthdepth$width / widthdepth$depth,
-                           rep(NA, nrow(widthdepth)), rep(NA, nrow(widthdepth))))
+                           rep(NA, nrow(widthdepth)), rep(NA, nrow(widthdepth))),
+                     stringsAsFactors=FALSE)
   names(XWDR) <- c("SampleID", "metric", "mean", "sd", "count")
   XWDA <- data.frame(cbind(widthdepth$SampleID, rep("XWDA", nrow(widthdepth)),
                            widthdepth$width * (widthdepth$depth/100),
-                           rep(NA, nrow(widthdepth)), rep(NA, nrow(widthdepth))))
+                           rep(NA, nrow(widthdepth)), rep(NA, nrow(widthdepth))),
+                     stringsAsFactors=FALSE)
   names(XWDA) <- c("SampleID", "metric", "mean", "sd", "count")
-
+  width_result <- rbind(XWDA, XWDR, width_result)
+  }
   velocity <- subset(datum, AnalyteName == "Velocity" & LocationCode == "X")
-  velocity$Result <- as.numeric(velocity$Result)
-  velocity_result <- ddply(velocity, "SampleID", function(df){
-    data.frame("SampleID" = rep(unique(df$SampleID), 3),
-               "metric" = c("XWV", "MXWV", "PWVZ"),
-               "mean" = c(mean(df$Result), max(df$Result), sum(df$Result == 0)/nrow(df)),
-               "sd" = c(sd(df$Result), NA, NA),
-               "count" = rep(nrow(df), 3))
-  })
-  
-  rbind(result, depth_result, width_result, XWDR, XWDA, velocity_result)
+  if(nrow(velocity) == 0)
+    velocity_result <- data.frame("SampleID"=NULL,
+                               "metric"=NULL, 
+                               "mean"=NULL,
+                               "sd"=NULL,
+                               "count"=NULL)
+  else {
+    velocity$Result <- as.numeric(velocity$Result)
+    velocity_result <- ddply(velocity, "SampleID", function(df){
+      data.frame("SampleID" = rep(unique(df$SampleID), 3),
+                 "metric" = c("XWV", "MXWV", "PWVZ"),
+                 "mean" = c(mean(df$Result), max(df$Result), sum(df$Result == 0)/nrow(df)),
+                 "sd" = c(sd(df$Result), NA, NA),
+                 "count" = rep(nrow(df), 3))
+    })
+  }
+  rbind(result, depth_result, width_result, velocity_result)
 }
   
   
