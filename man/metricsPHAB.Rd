@@ -2,7 +2,7 @@
 \alias{metricsPHAB}
 \title{Calculate SWAMP PHAB metrics}
 \usage{
-metricsPHAB(phabdata, verbose = 0)
+metricsPHAB(phabdata, detailed = FALSE, verbose = 0)
 }
 \arguments{
   \item{phabdata}{A data frame of SWAMP formatted PHAB

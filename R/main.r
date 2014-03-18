@@ -7,7 +7,9 @@
 #' @export
 
 
-metricsPHAB <- function(phabdata, verbose = 0){
+metricsPHAB <- function(phabdata,
+                        detailed = FALSE,
+                        verbose = 0){
   metricFun <- function (data) {
     
     
@@ -23,18 +25,29 @@ metricsPHAB <- function(phabdata, verbose = 0){
                     unique(data$SampleID),
                     "in", f, "metrics; discarding"))
         NULL})})
-    names(resultList) <- metrics
     resultList <- resultList[sapply(resultList, is.data.frame)]
     result <- rbind.fill(resultList)
-    result
+    if(detailed){
+      notCalc <- metricCodes[!metricCodes %in% result$metric] 
+      list(result, notCalc)
+    } else{
+      result
+    }
+    
   }
   datasplit <- split(phabdata, phabdata$SampleID)
   results <- lapply(datasplit, function(d){
     if(verbose >= 1)print(unique(d$SampleID))
     metricFun(d)})
-
-  resultsFinal <- rbind.fill(results)
-  resultsFinal[, 1:5]
+  
+  if(detailed){
+    rdata <- lapply(results, '[[', 1)
+    resultsFinal <- rbind.fill(rdata)[, 1:5]
+    notCalc <- lapply(results, '[[', 2)
+    list(results = resultsFinal, notCalculated = notCalc)
+  } else {
+    rbind.fill(results)[, 1:5]
+  }
 }
 
 

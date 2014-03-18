@@ -20,6 +20,10 @@ validatePHAB <- function(data, returnPurged = FALSE) {
   bad <- !is.na(data$Result) & as.numeric(data$Result) < 0
   
   if(returnPurged){
+    data <- data.frame(lapply(data, # convert factors to strings
+                      function(x){if(is.factor(x))
+                        as.character(x) else x}),
+               stringsAsFactors=FALSE)
     badsamples <- unique(data[bad, c("SampleID", "AnalyteName")])
     good <- sapply(1:nrow(badsamples), function(i){
       which(data$SampleID == badsamples$SampleID[i] &
