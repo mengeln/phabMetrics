@@ -21,9 +21,9 @@ bankMorphology <- function(x){
   } else {
     
     
-    metrics <- c(PBM_S = function(x)mean(x$VariableResult == 'stable'),
-                 PBM_V = function(x)mean(x$VariableResult == 'vulnerable'),
-                 PBM_E = function(x)mean(x$VariableResult == 'eroded'))
+    metrics <- c(PBM_S = function(x)100 * mean(x$VariableResult == 'stable'),
+                 PBM_V = function(x)100 * mean(x$VariableResult == 'vulnerable'),
+                 PBM_E = function(x)100 * mean(x$VariableResult == 'eroded'))
     
     stability_result <- metricCalc(NULL)(stability, metrics)
   }
